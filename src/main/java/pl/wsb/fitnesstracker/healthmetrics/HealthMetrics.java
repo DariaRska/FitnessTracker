@@ -21,6 +21,9 @@ public class HealthMetrics {
     @Nullable
     private Long id;
 
+    @Column(name = "user_id", nullable = false)
+    private Integer user_id;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
