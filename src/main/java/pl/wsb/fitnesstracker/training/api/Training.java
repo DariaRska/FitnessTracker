@@ -1,16 +1,31 @@
 package pl.wsb.fitnesstracker.training.api;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import pl.wsb.fitnesstracker.training.internal.ActivityType;
 import pl.wsb.fitnesstracker.user.api.User;
+import pl.wsb.fitnesstracker.workoutsession.WorkoutSession;
 
 import java.util.Date;
 
+@Entity
+@Table(name = "trainings")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Training {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Nullable
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Date startTime;
@@ -22,6 +37,11 @@ public class Training {
     private double distance;
 
     private double averageSpeed;
+
+//    Relacja OneToOne
+//    @OneToOne(mappedBy = "training", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private WorkoutSession workoutSession;
+
 
     public Training(
             final User user,
