@@ -1,12 +1,10 @@
-package pl.wsb.fitnesstracker.userevent;
+package pl.wsb.fitnesstracker.event;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import pl.wsb.fitnesstracker.event.Event;
-import pl.wsb.fitnesstracker.training.api.Training;
 import pl.wsb.fitnesstracker.user.api.User;
 
 @Entity
