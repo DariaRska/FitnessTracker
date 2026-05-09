@@ -3,6 +3,7 @@ package pl.wsb.fitnesstracker.loader;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.wsb.fitnesstracker.event.Event;
 import pl.wsb.fitnesstracker.event.EventRepository;
 import pl.wsb.fitnesstracker.training.api.Training;
+import pl.wsb.fitnesstracker.training.api.TrainingRepository;
 import pl.wsb.fitnesstracker.training.internal.ActivityType;
 import pl.wsb.fitnesstracker.user.api.User;
 
@@ -42,13 +44,23 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 class InitialDataLoader {
 
+    @Autowired
+    private EventRepository eventRepository;
+
+
     private final JpaRepository<User, Long> userRepository;
 
     private final JpaRepository<Training, Long> trainingRepository;
 
+    @Autowired
+    private TrainingRepository trainingRepositoryInterface;
+
     @EventListener
     @Transactional
     @SuppressWarnings({"squid:S1854", "squid:S1481", "squid:S1192", "unused"})
+
+
+
     public void loadInitialData(ContextRefreshedEvent event) {
         verifyDependenciesAutowired();
 
@@ -56,164 +68,11 @@ class InitialDataLoader {
 
         List<User> sampleUserList = generateSampleUsers();
         List<Training> sampleTrainingList = generateTrainingData(sampleUserList);
-        EventRepository eventRepository = new EventRepository() {
-            @Override
-            public List<Event> findUpcoming(LocalDate now) {
-                return List.of();
-            }
 
-            @Override
-            public void flush() {
-
-            }
-
-            @Override
-            public <S extends Event> S saveAndFlush(S entity) {
-                return null;
-            }
-
-            @Override
-            public <S extends Event> List<S> saveAllAndFlush(Iterable<S> entities) {
-                return List.of();
-            }
-
-            @Override
-            public void deleteAllInBatch(Iterable<Event> entities) {
-
-            }
-
-            @Override
-            public void deleteAllByIdInBatch(Iterable<Long> longs) {
-
-            }
-
-            @Override
-            public void deleteAllInBatch() {
-
-            }
-
-            @Override
-            public Event getOne(Long aLong) {
-                return null;
-            }
-
-            @Override
-            public Event getById(Long aLong) {
-                return null;
-            }
-
-            @Override
-            public Event getReferenceById(Long aLong) {
-                return null;
-            }
-
-            @Override
-            public <S extends Event> List<S> findAll(Example<S> example) {
-                return List.of();
-            }
-
-            @Override
-            public <S extends Event> List<S> findAll(Example<S> example, Sort sort) {
-                return List.of();
-            }
-
-            @Override
-            public <S extends Event> List<S> saveAll(Iterable<S> entities) {
-                return List.of();
-            }
-
-            @Override
-            public List<Event> findAll() {
-                return List.of();
-            }
-
-            @Override
-            public List<Event> findAllById(Iterable<Long> longs) {
-                return List.of();
-            }
-
-            @Override
-            public <S extends Event> S save(S entity) {
-                return null;
-            }
-
-            @Override
-            public Optional<Event> findById(Long aLong) {
-                return Optional.empty();
-            }
-
-            @Override
-            public boolean existsById(Long aLong) {
-                return false;
-            }
-
-            @Override
-            public long count() {
-                return 0;
-            }
-
-            @Override
-            public void deleteById(Long aLong) {
-
-            }
-
-            @Override
-            public void delete(Event entity) {
-
-            }
-
-            @Override
-            public void deleteAllById(Iterable<? extends Long> longs) {
-
-            }
-
-            @Override
-            public void deleteAll(Iterable<? extends Event> entities) {
-
-            }
-
-            @Override
-            public void deleteAll() {
-
-            }
-
-            @Override
-            public List<Event> findAll(Sort sort) {
-                return List.of();
-            }
-
-            @Override
-            public Page<Event> findAll(Pageable pageable) {
-                return null;
-            }
-
-            @Override
-            public <S extends Event> Optional<S> findOne(Example<S> example) {
-                return Optional.empty();
-            }
-
-            @Override
-            public <S extends Event> Page<S> findAll(Example<S> example, Pageable pageable) {
-                return null;
-            }
-
-            @Override
-            public <S extends Event> long count(Example<S> example) {
-                return 0;
-            }
-
-            @Override
-            public <S extends Event> boolean exists(Example<S> example) {
-                return false;
-            }
-
-            @Override
-            public <S extends Event, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
-                return null;
-            }
-        };
         List<Event> events = eventRepository.findUpcoming(LocalDate.now());
         System.out.println("Nadchodzące eventy: " + events.size());
+        Double totalDistance = trainingRepositoryInterface.sumDistanceByUserId(Long.valueOf(1L));
+        System.out.println("Suma kilometrów użytkownik 1: " + totalDistance);
 
 
         log.info("Finished loading initial data");
@@ -322,7 +181,7 @@ class InitialDataLoader {
             trainingData.add(training9);
             trainingData.add(training10);
 
-            trainingRepository.saveAll(trainingData);
+            trainingRepositoryInterface.saveAll(trainingData);
         } catch (ParseException e) {
             e.printStackTrace();
         }

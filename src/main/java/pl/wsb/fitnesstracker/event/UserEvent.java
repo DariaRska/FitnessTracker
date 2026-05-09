@@ -27,4 +27,9 @@ public class UserEvent {
 
     private String status;
 
+    public UserEvent(User user, Event event) {
+        this.user = user;
+        this.event = event;
+    }
+
 }
