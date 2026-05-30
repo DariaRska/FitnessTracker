@@ -2,10 +2,7 @@ package pl.wsb.fitnesstracker.user.internal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import pl.wsb.fitnesstracker.user.api.User;
-import pl.wsb.fitnesstracker.user.api.UserDto;
-import pl.wsb.fitnesstracker.user.api.UserProvider;
-import pl.wsb.fitnesstracker.user.api.UserService;
+import pl.wsb.fitnesstracker.user.api.*;
 
 import java.util.List;
 
@@ -40,6 +37,13 @@ class UserController {
                 .map(this.userMapper::toUserDto)
                 .toList();
     }
+
+
+    @GetMapping("/v1/users/simple")
+    public List<SimpleUser> getAllSimpleUsers() {
+        return userService.getAllSimpleUsers();
+    }
+
 
 
 }
